@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Details</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="Enter the username" autofocus>
+            <button class="search-button"><img src="search.jpg" alt="search"></button>
+        </div>
+        <div class="main">
+            <div class="image">
+                <img src="profile.jpg" alt="profile-image" width="100px" height="100px">
+            </div>
+            <div class="user-info">
+                <h2>Name</h2>
+                <p>Bio</p>
+    
+                
+                    <ul class="info">
+                        <li><span id="followers">###</span><strong>Followers</strong></li>
+                        <li><span id="following">###</span><strong>Following</strong></li>
+                        <li><span id="reposCount">###</span><strong>Repos</strong></li>
+                    </ul>
+                
+    
+                <div id="repos">
+    
+                </div>
+            </div>
+        </div>
+    </div>
+
+ <script>
+const ApiURL='https://api.github.com/users/';
+
+async function getProfile(user){
+    try{
+        const response=await fetch(ApiURL+`${user}`);
+        var data=await response.json();
+       
+
+        document.querySelector('h2').innerHTML=data.login;
+        document.querySelector('p').innerHTML=data.bio;
+        document.querySelector('.info li #followers').innerHTML=data.followers;
+        document.querySelector('.info li #following').innerHTML=data.following;
+        document.querySelector('.info li #reposCount').innerHTML=data.public_repos;
+        document.querySelector('.card .main .image img').src=data.avatar_url;
+        document.querySelector('.main').style.display="block";
+    }catch(error){
+    console.log(error);
+    }
+}
+
+
+let  ApiURL2='https://api.github.com/users/';
+
+
+async function getRepos(username){
+const response=await fetch(ApiURL2+`${username}`+"/repos");
+var data=await response.json();
+
+const area=document.querySelector('#repos');
+data.forEach(
+    (item )=> {
+  const repoItem = document.createElement('a');
+  repoItem.classList.add('repo'); // Remove the dot (.) from classList.add
+  repoItem.href = item.html_url;
+  repoItem.innerText = item.name;
+  repoItem.target="_blank" //Makes sure it is open in new tab
+  area.appendChild(repoItem);
+});
+document.querySelector('.main').style.display="block";
+}
+
+document.querySelector('.search-button').addEventListener('click',async()=>{
+    var username=document.querySelector('.search input').value;
+    if(username!=""){
+    await getProfile(username);
+    await getRepos(username);
+    document.querySelector('.search input').value="";
+    }
+});
+
+ </script>
+
+
+
+
+
+
+  </body>
+ </html>
+              
